@@ -1,0 +1,26 @@
+# define an action:
+# [action name] [action value]
+
+#action map command net use \\cosmo\c /yes
+action map exec net use \\cosmo\d /yes
+action common file common.bat
+action common exec io sono definito a part
+action logger server_exec /usr/bin/logger io sono un test
+action logger exec test
+
+#action printers ricoh net use \\cosmo\ricohprint
+
+#match user_pluto user pluto
+match group_bin user_in_group_id 1
+#match tutti all
+#match session_user session_user pippo
+#match machine_pc1 machine pc1
+match localhost client_address 127.0.0.0/24
+
+#bind machine_pc1 map
+#bind session_user printers
+#bind !user_pluto map
+#bind tutti common
+#bind group_bin map
+bind group_bin localhost common
+bind localhost logger

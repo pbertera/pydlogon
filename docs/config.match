@@ -1,0 +1,83 @@
+# action definition:
+#
+# action [action name] [action type] [action value]
+#   "action type":      must be exec, file or server_exec. For exec type "action value" is a DOS command to run on a client machine.
+#   "action value":     for file type "action value" must be a full path of a .bat file to execute
+#                       for server_exec is a command to exec on server
+
+# match definition:
+# match [match name] [match statement]
+# "match statement":    may be: 
+#                               * user: match against %u samba variable
+#                               * group: match against %g samba variable
+#                               * session_user: match against %U samba variable
+#                               * session_group: match against %G samba variable
+#                               * machine: match against %m samba variable
+#                               * client_address: match against %I samba variable
+#                               * arch: match against %a samba variable
+#                               * user_in_group: search %u samba variable in system group specified
+#                               * user_in_group_id:  search %u samba variable in system group specified by id
+#                               * session_user_in_group: search %U samba variable in system group specified
+#                               * session_user_in_group_id: search %U samba variable in system group specified by id
+#                               * server_exec: execute a local command in a system()
+#                               * all: match any, for common operations
+#
+#
+
+# bind definition:
+# bind [match name] [action name]
+#   bind a match to an action statement
+#   In bind statement you can negate a match with "!"
+
+# Examples:
+
+#action map command net use \\cosmo\c /yes
+#action map exec net use \\cosmo\d /yes
+#action common files common.bat
+
+#action printers ricoh net use \\cosmo\ricohprint
+
+#match user_pluto user pluto
+#match group_bin user_in_group_id 1
+#match clients all
+#match session_user session_user pippo
+#match machine_pc1 machine pc1
+#match localhost client_address 127.0.0.0/24
+
+#bind machine_pc1 map
+#bind session_user printers
+#bind !user_pluto map
+#bind clients common
+#bind group_bin map
+#bind localhost map
+
+# define common action with a file to include
+action common-include file /opt/dlogon/common-files/common.bat
+
+# map device L: to //cosmo/sit-data
+action map_L exec net use L: \\cosmo\sit-data /persistent:yes
+
+# install PDF printer end mappa S: to \\cosmo\scambio
+action map_S_printer_PDF exec rundll32.exe printui.DLL,PrintUIEntry /in /n\\cosmo\PDF
+action map_S_printer_PDF exec net use S: \\cosmo\scambio /persistent:yes
+action map_S_printer_PDF server_exec /usr/bin/logger user login
+
+# define a common match for all users
+match clients all
+
+# define a match for user in SIT-data system group
+
+match Sit-data session_user_in_group SIT-data
+
+# define a match for client machine segreteria-02
+
+match seg_02 machine segreteria-02
+
+# bind all to common-include
+bind clients common-include
+
+# bind map L: device to users in system group SYT-data
+bind Sit-data map_L
+
+# Install PDF printer and map S: device to PC segreteria-02
+bind seg_02 map_S_printer_PDF

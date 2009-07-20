@@ -1,0 +1,5 @@
+REGEDIT4
+
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings]
+"AutoConfigURL"="http://192.168.2.1/proxy.pac"
+"ProxyAutoConfigURL"="http://192.168.2.1/proxy.pac"
